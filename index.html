@@ -466,6 +466,73 @@
   .reset-btn:focus-visible{outline:2px solid #ffe3ad;outline-offset:3px}
   .counter.danger-shake{animation:counterShake .34s ease}
 
+  /* ---------- input mode ---------- */
+  .playbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin:0 1px 9px;
+  }
+  .playbar-copy{display:flex;align-items:center;gap:8px;min-width:0}
+  .playbar-title{
+    flex:none;
+    color:var(--dim);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.12em;
+  }
+  .mode-hint{
+    overflow:hidden;
+    color:#6f8897;
+    font-size:10px;
+    letter-spacing:.02em;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+  }
+  .mode-switch{
+    display:inline-flex;
+    flex:none;
+    gap:2px;
+    padding:3px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:rgba(2,9,14,.45);
+  }
+  .mode-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    min-height:30px;
+    padding:6px 10px;
+    border:0;
+    border-radius:7px;
+    background:transparent;
+    color:var(--dim);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.04em;
+    cursor:pointer;
+    transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+    outline:none;
+  }
+  .mode-btn svg{width:12px;height:12px;flex:none}
+  .mode-btn:hover{color:var(--text)}
+  .mode-btn[aria-pressed="true"]{
+    background:rgba(255,189,92,.13);
+    box-shadow:inset 0 0 0 1px rgba(255,189,92,.25);
+    color:var(--amber);
+  }
+  .mode-btn[data-mode="flag"][aria-pressed="true"]{
+    background:rgba(255,124,104,.12);
+    box-shadow:inset 0 0 0 1px rgba(255,124,104,.28);
+    color:#ff9a88;
+  }
+  .mode-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .board.is-flag-mode .cell.covered,
+  .board.is-flag-mode .cell.flagged{cursor:crosshair}
+
   /* ---------- board ---------- */
   .board-area{position:relative}
   .board-viewport{
@@ -953,6 +1020,7 @@
     .statusbar{align-items:flex-start;gap:8px}
     .best-chip{padding:5px 8px}
     .best-chip span{display:none}
+    .mode-hint{display:none}
   }
   @media (max-width:460px){
     .page{padding-left:12px;padding-right:12px}
@@ -968,6 +1036,9 @@
     .counter{height:43px;padding:0 10px;gap:7px}
     .counter svg{width:13px;height:13px}
     .digits{font-size:18px;min-width:2.8ch}
+    .playbar{gap:8px}
+    .playbar-title{font-size:8px;letter-spacing:.06em}
+    .mode-btn{min-height:36px;padding:7px 10px;font-size:11px}
     .reset-btn{width:49px;height:49px;border-radius:16px}
     .reset-btn svg{width:31px;height:31px}
     .status-text{font-size:10px}
@@ -1100,6 +1171,23 @@
         </div>
       </div>
 
+      <div class="playbar">
+        <div class="playbar-copy">
+          <span class="playbar-title">点击模式</span>
+          <span class="mode-hint" id="modeHint">轻点翻开 · 右键或长按插旗</span>
+        </div>
+        <div class="mode-switch" role="group" aria-label="点击模式">
+          <button class="mode-btn" type="button" data-mode="reveal" aria-pressed="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.2"/></svg>
+            <span>翻开</span>
+          </button>
+          <button class="mode-btn" type="button" data-mode="flag" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 21V3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".65"/><path d="M8 4.6c3-1.9 5.4 1.6 8.4-.2v6.9c-3 1.8-5.4-1.7-8.4.2Z" fill="currentColor"/></svg>
+            <span>插旗</span>
+          </button>
+        </div>
+      </div>
+
       <div class="board-area">
         <div class="board-viewport" id="boardViewport">
           <div class="board-frame" id="boardFrame">
@@ -1140,7 +1228,7 @@
     <footer class="footer">
       <p class="footer-tip">
         <span class="desktop-tip">左键翻开 · 右键插旗 · 数字上左键快速展开</span>
-        <span class="mobile-tip">轻点翻开 · 长按插旗</span>
+        <span class="mobile-tip">轻点翻开 · 长按或切换「插旗」模式</span>
       </p>
       <p class="footer-mark">FIRST CLICK IS ALWAYS SAFE</p>
     </footer>
@@ -1170,7 +1258,7 @@
         <span class="rule-num">02</span>
         <div>
           <h3>插旗做标记</h3>
-          <p>右键点击、Shift + 点击或长按格子插旗。数字表示相邻 8 格中的地雷数。</p>
+          <p>右键点击、Shift + 点击或长按格子插旗。触屏也可以切换棋盘上方的「插旗」模式，轻点格子直接标记。数字表示相邻 8 格中的地雷数。</p>
         </div>
       </div>
       <div class="rule-item">
@@ -1184,7 +1272,7 @@
     <div class="rules-keys">
       <span>键盘</span>
       <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> 移动
-      <kbd>Space</kbd> 翻开
+      <kbd>Space</kbd> 按当前模式操作
       <kbd>F</kbd> 插旗
     </div>
     <button class="primary-btn rules-action" id="rulesStart" type="button">开始游戏</button>
@@ -1204,6 +1292,8 @@
     expert: { cols: 30, rows: 16, mines: 99 }
   };
   const LIMITS = { minCols: 5, maxCols: 30, minRows: 5, maxRows: 24, minMines: 1 };
+  const LONG_PRESS_MS = 360;
+  const TOUCH_SLOP = 18;
   const STORAGE = {
     best: 'minefield.best.v1',
     custom: 'minefield.custom.v1',
@@ -1238,6 +1328,8 @@
     customTabMeta: $('.diff-tab[data-diff="custom"] .tab-meta'),
     mineCounter: $('#mineCounter'),
     mineCount: $('#mineCount'),
+    modeHint: $('#modeHint'),
+    modeBtns: $$('.mode-btn'),
     timer: $('#timer'),
     timerCounter: $('#timerCounter'),
     resetBtn: $('#resetBtn'),
@@ -1277,6 +1369,8 @@
   let suppressNextClick = false;
   let suppressClearTimer = null;
   let longPress = null;
+  let inputMode = 'reveal';
+  let lastBoardPointerWasTouch = false;
   let focusIndex = 0;
   let resizeRaf = 0;
   let audioCtx = null;
@@ -1340,20 +1434,29 @@
       startGame(current, current.type, { persist: false });
     });
 
+    els.modeBtns.forEach(button => {
+      button.addEventListener('click', () => {
+        const mode = button.dataset.mode;
+        if (mode === inputMode) return;
+        setInputMode(mode);
+        playSound('tap');
+        showToast(mode === 'flag' ? '插旗模式：轻点格子标记' : '翻开模式已开启');
+      });
+    });
+
     els.board.addEventListener('click', handleBoardClick);
     els.board.addEventListener('contextmenu', handleContextMenu);
     els.board.addEventListener('pointerdown', handlePointerDown);
     els.board.addEventListener('pointermove', handlePointerMove);
     els.board.addEventListener('pointerup', clearLongPress);
-    els.board.addEventListener('pointercancel', clearLongPress);
-    els.board.addEventListener('pointerleave', () => {
-      if (longPress) clearLongPress();
-    });
+    els.board.addEventListener('pointercancel', handlePointerCancel);
     els.board.addEventListener('keydown', handleBoardKeydown);
     els.board.addEventListener('focusin', handleBoardFocus);
 
     document.addEventListener('pointerup', refreshFace);
     document.addEventListener('pointercancel', refreshFace);
+    document.addEventListener('pointerup', clearLongPress);
+    document.addEventListener('pointercancel', clearLongPress);
 
     els.resultClose.addEventListener('click', () => closeResult(true));
     els.inspectBtn.addEventListener('click', () => closeResult(true));
@@ -1472,6 +1575,7 @@
     focusIndex = 0;
 
     setActiveTab(type);
+    setInputMode('reveal');
     setFace('smile');
     updateHud();
     updateBest();
@@ -1658,7 +1762,13 @@
     if (!game || game.phase === 'won' || game.phase === 'lost') return;
 
     const cell = board[index];
-    if (!cell || cell.flagged) return;
+    if (!cell) return;
+
+    if (inputMode === 'flag' && !cell.revealed) {
+      toggleFlag(index);
+      return;
+    }
+    if (cell.flagged) return;
 
     if (!game.started) {
       beginGame(index);
@@ -1670,10 +1780,24 @@
   }
 
   function handleContextMenu(event) {
-    if (!event.target.closest('.cell')) return;
+    const target = event.target.closest('.cell');
+    if (!target) return;
     event.preventDefault();
     if (!game || (game.phase !== 'playing' && game.phase !== 'idle')) return;
-    const target = event.target.closest('.cell');
+
+    const touchLike = lastBoardPointerWasTouch || event.pointerType === 'touch' || event.pointerType === 'pen';
+
+    if (touchLike) {
+      if (longPress && !longPress.fired) {
+        const index = longPress.index;
+        longPress.fired = true;
+        if (longPress.timer) window.clearTimeout(longPress.timer);
+        suppressNextClick = true;
+        toggleFlag(index);
+      }
+      return;
+    }
+
     const index = Number(target.dataset.index);
     if (!Number.isInteger(index)) return;
     toggleFlag(index);
@@ -1886,6 +2010,18 @@
     });
   }
 
+  function setInputMode(mode) {
+    inputMode = mode === 'flag' ? 'flag' : 'reveal';
+    const flagging = inputMode === 'flag';
+    els.modeBtns.forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.mode === inputMode));
+    });
+    els.modeHint.textContent = flagging
+      ? '轻点插旗 · 再次轻点取消'
+      : '轻点翻开 · 右键或长按插旗';
+    els.board.classList.toggle('is-flag-mode', flagging);
+  }
+
   /* ------------------------------------------------------------------ *
    *  Rendering
    * ------------------------------------------------------------------ */
@@ -2018,6 +2154,7 @@
     if (!target) return;
 
     suppressNextClick = false;
+    lastBoardPointerWasTouch = event.pointerType !== 'mouse';
 
     if (event.pointerType === 'mouse') {
       if (event.button === 0) {
@@ -2033,26 +2170,41 @@
     if (!Number.isInteger(index)) return;
 
     clearLongPress();
+    const startedAt = performance.now();
     longPress = {
       index,
       x: event.clientX,
       y: event.clientY,
+      startedAt,
+      fired: false,
+      moved: false,
       timer: window.setTimeout(() => {
-        if (!longPress) return;
-        const pressedIndex = longPress.index;
-        longPress.long = true;
+        if (!longPress || longPress.index !== index || longPress.moved) return;
+        longPress.fired = true;
         suppressNextClick = true;
-        toggleFlag(pressedIndex);
+        toggleFlag(index);
         if (navigator.vibrate) navigator.vibrate(12);
-      }, 430)
+      }, LONG_PRESS_MS)
     };
   }
 
   function handlePointerMove(event) {
     if (!longPress) return;
-    if (Math.abs(event.clientX - longPress.x) > 10 || Math.abs(event.clientY - longPress.y) > 10) {
+    if (Math.abs(event.clientX - longPress.x) > TOUCH_SLOP || Math.abs(event.clientY - longPress.y) > TOUCH_SLOP) {
+      longPress.moved = true;
       clearLongPress();
     }
+  }
+
+  function handlePointerCancel() {
+    if (longPress && !longPress.fired && !longPress.moved
+      && performance.now() - longPress.startedAt >= LONG_PRESS_MS * 0.7) {
+      longPress.fired = true;
+      suppressNextClick = true;
+      toggleFlag(longPress.index);
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
+    clearLongPress();
   }
 
   function clearLongPress() {
@@ -2065,7 +2217,7 @@
       suppressClearTimer = window.setTimeout(() => {
         suppressNextClick = false;
         suppressClearTimer = null;
-      }, 500);
+      }, 900);
     }
   }
 
