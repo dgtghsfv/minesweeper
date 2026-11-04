@@ -42,59 +42,7 @@ python -m http.server 8000
 
 然后访问 `http://localhost:8000`。
 
-## 发布到 GitHub Pages
-
-### 1. 新建仓库
-
-在 GitHub 上新建一个公开仓库，例如 `minesweeper`，不要勾选自动生成 README。
-
-### 2. 提交并推送
-
-在项目根目录执行：
-
-```bash
-git init
-git add index.html README.md .gitignore .nojekyll
-git commit -m "feat: add minesweeper game"
-git branch -M main
-git remote add origin https://github.com/<your-name>/<repo>.git
-git push -u origin main
-```
-
-注意：这个工作区里还有其他文件，请按上面的文件名逐个 `git add`，不要使用 `git add .`。
-
-如果使用 GitHub CLI，可以在完成上面的 `git commit` 之后，用下面的命令创建远程仓库并推送：
-
-```bash
-gh repo create <repo> --public --source=. --remote=origin --push
-```
-
-### 3. 开启 Pages
-
-1. 打开 GitHub 仓库的 **Settings**
-2. 左侧选择 **Pages**
-3. **Build and deployment** → **Source** 选择 **Deploy from a branch**
-4. 分支选择 **main**，目录选择 **/(root)**
-5. 点击 **Save**
-
-稍等片刻，站点会发布在：
-
-```text
-https://<your-name>.github.io/<repo>/
-```
-
-## 项目结构
-
-```text
-.
-├── index.html    # 完整游戏（HTML + CSS + JavaScript）
-├── README.md
-├── .gitignore
-└── .nojekyll     # 让 GitHub Pages 跳过 Jekyll 处理
-```
-
 ## 说明
 
 - 游戏不需要后端，所有逻辑都在浏览器中运行。
 - 最佳成绩保存在浏览器 localStorage 中，不会上传到服务器。
-- 项目暂未指定开源许可证。如需 MIT 等许可证，可以再添加 `LICENSE` 文件。
